@@ -34,8 +34,12 @@ var checkForMatches = function(newBump) {
         var timeDelta = Math.abs(b.ts - newBump.ts);
         if (distDelta < DISTANCE_THRESHOLD && timeDelta < TIME_THRESHOLD) {
             console.log("found a match: " + b.socket + ", " + newBump.socket);
-            io.sockets.connected[b.socket].emit('response', {'status':1});
-            io.sockets.connected[newBump.socket].emit('response', {'status':1});
+            if (io.sockets.connected.indexOf(b.socket) >= 0) {
+                io.sockets.connected[b.socket].emit('response', {'status':1});
+            }
+            if (io.sockets.connected.indexOf(newBump.socket) >= 0) {
+                io.sockets.connected[newBump.socket].emit('response', {'status':1});
+            }
             bumps.splice(i, 1); // remove old bump from array
             return;
         }
@@ -49,7 +53,9 @@ setInterval(function() {
         var delta = new Date().getTime() - b.ts;
         if (delta > 2000) {
             bumps.splice(i, 1);
-            io.sockets.connected[b.socket].emit('response', {status:0});
+            if (io.sockets.connected.indexOf(b.socket) >= 0) {
+                io.sockets.connected[b.socket].emit('response', {status:0});
+            }
         }
     } 
 }, 5000);
