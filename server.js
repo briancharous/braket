@@ -22,6 +22,7 @@ http.listen((process.env.PORT || 5000), function() {
 io.on('connection', function(socket) {
     console.log('a user connected');
     socket.on('bump', function(message) {
+        console.log(message);
         bump = {lat: message.lat, lon: message.lon, ts: message.ts, socket: socket.id};
         checkForMatches(bump);
     });
@@ -34,10 +35,10 @@ var checkForMatches = function(newBump) {
         var timeDelta = Math.abs(b.ts - newBump.ts);
         if (distDelta < DISTANCE_THRESHOLD && timeDelta < TIME_THRESHOLD) {
             console.log("found a match: " + b.socket + ", " + newBump.socket);
-            if (io.sockets.connected.indexOf(b.socket) >= 0) {
+            if (io.sockets.connected.hasOwnProperty(b.socket)) {
                 io.sockets.connected[b.socket].emit('response', {'status':1});
             }
-            if (io.sockets.connected.indexOf(newBump.socket) >= 0) {
+            if (io.sockets.connected.hasOwnProperty(newBump.socket)) {
                 io.sockets.connected[newBump.socket].emit('response', {'status':1});
             }
             bumps.splice(i, 1); // remove old bump from array
@@ -53,7 +54,7 @@ setInterval(function() {
         var delta = new Date().getTime() - b.ts;
         if (delta > 2000) {
             bumps.splice(i, 1);
-            if (io.sockets.connected.indexOf(b.socket) >= 0) {
+            if (io.sockets.connected.hasOwnProperty(b.socket)) {
                 io.sockets.connected[b.socket].emit('response', {status:0});
             }
         }
