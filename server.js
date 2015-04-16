@@ -14,8 +14,8 @@ app.get('/', function(request, response) {
     response.sendFile(__dirname + '/static/home.html');
 });
 
-http.listen(80, function() {
-    console.log('listening on *:5000');
+http.listen(8080, function() {
+    console.log('listening on *:8080');
 });
 
 // socket.io stuff
