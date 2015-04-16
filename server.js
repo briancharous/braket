@@ -14,8 +14,8 @@ app.get('/', function(request, response) {
     response.sendFile(__dirname + '/static/home.html');
 });
 
-http.listen(8080, function() {
-    console.log('listening on *:8080');
+http.listen((process.env.PORT || 5000), function() {
+    console.log('listening');
 });
 
 // socket.io stuff
